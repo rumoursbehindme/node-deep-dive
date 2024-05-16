@@ -4,5 +4,10 @@
   "description": "General knowldge",
   "main": "index.js",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "fork": "node src/fork-feature/mainfile.js",
+    "spawn": "node src/spawn-feature/spawnit.js"
+  }
 }

@@ -1,0 +1,8 @@
+{
+  "name": "node-deep-dive",
+  "version": "1.0.0",
+  "description": "General knowldge",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false
+}

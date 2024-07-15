@@ -1,7 +1,7 @@
 {
   "name": "node-deep-dive",
   "version": "1.0.0",
-  "description": "General knowldge",
+  "description": "General knowledge",
   "main": "index.js",
   "license": "MIT",
   "private": false,
@@ -9,5 +9,11 @@
   "scripts": {
     "fork": "node src/fork-feature/mainfile.js",
     "spawn": "node src/spawn-feature/spawnit.js"
+  },
+  "repository": "https://github.com/rumoursbehindme/node-deep-dive.git",
+  "author": "rajeevhegde5@gmail.com",
+  "dependencies": {},
+  "devDependencies": {
+    "@marko/compiler": "^5.37.3"
   }
 }

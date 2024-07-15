@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            /* Use flexbox to align buttons */
+            flex-direction: column;
+            /* Align buttons in column */
+            align-items: flex-start;
+            /* Align items to the start (left) */
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            /* Make all buttons the same width */
+            background-color: #368548;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            /* Added margin bottom for spacing */
+        }
+
+        button.checkDatabase {
+            background-color: #007bff;
+            /* Different color for Check Database button */
+        }
+
+        button:hover {
+            background-color: #155724;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: none;
+            overflow: auto;
+        }
+
+        .message.success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .link {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .link:hover {
+            background-color: #0056b3;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Add Products</h2>
+        <form id="updateDatabaseForm">
+            <label for="name">Name</label>
+            <select id="nameSelect" name="nameSelect">
+                <option value="">Select a product...</option>
+            </select>
+            <input type="text" id="nameInput" name="nameInput" placeholder="Or enter new product name...">
+            <br><br>
+
+            <label for="quantity">Quantity</label>
+            <select id="quantity" name="quantity" required>
+                <option value="">Select quantity...</option>
+            </select>
+            <br><br>
+
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" required placeholder="Enter product description">
+            <br><br>
+
+            <button type="button" onclick="submitData()">Update</button>
+            <button type="button" onclick="checkDatabase()" class="checkDatabase">Check Database</button>
+            <br /><br />
+
+            <a href="/menu" class="link">Back to Menu</a>
+        </form>
+
+        <div id="message" class="message"></div>
+        <div id="databaseContent" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Function to populate product names dropdown
+        function populateProductNames() {
+            const products = [
+                "Car", "Laptop", "Smartphone", "Headphones", "Watch", "Sunglasses", "Backpack", "Shoes",
+                "Jacket", "Dress", "Shirt", "Pants", "Hat", "Gloves", "Socks", "Towel", "Umbrella", "Wallet",
+                "Perfume", "Makeup Kit", "Camera", "Drone", "Bicycle", "Skateboard", "Surfboard", "Tent",
+                "Sleeping Bag", "Hammock", "Fishing Rod", "Binoculars", "Telescope", "Microphone", "Guitar",
+                "Keyboard", "Drum Set", "Violin", "Basketball", "Football", "Tennis Racket", "Golf Clubs",
+                "Yoga Mat", "Dumbbells", "Exercise Bike", "Treadmill", "Blender", "Coffee Maker", "Microwave",
+                "Toaster", "Vacuum Cleaner", "Fan", "Air Purifier", "Printer", "Scanner", "External Hard Drive",
+                "Router", "Smart Speaker"
+            ];
+            products.sort();
+
+            const nameDropdown = document.getElementById('nameSelect');
+            products.forEach(product => {
+                let option = document.createElement('option');
+                option.textContent = product;
+                option.value = product;
+                nameDropdown.appendChild(option);
+            });
+        }
+
+        // Function to populate quantity dropdown
+        function populateQuantity() {
+            const quantityDropdown = document.getElementById('quantity');
+            for (let i = 1; i <= 100; i++) {
+                let option = document.createElement('option');
+                option.textContent = i.toString();
+                option.value = i.toString();
+                quantityDropdown.appendChild(option);
+            }
+        }
+
+        // Call functions to populate dropdowns when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            populateProductNames();
+            populateQuantity();
+        });
+
+        // Function to handle form submission
+        function submitData() {
+            const form = document.getElementById('updateDatabaseForm');
+            const nameSelect = document.getElementById('nameSelect');
+            const nameInput = document.getElementById('nameInput');
+            const name = nameSelect.value || nameInput.value; // Use selected value or input value
+            const quantity = document.getElementById('quantity').value;
+            const description = document.getElementById('description').value;
+            const messageDiv = document.getElementById('message');
+
+            const data = {
+                name,
+                quantity,
+                description
+            };
+
+            axios.post('http://localhost:9000/updateDatabase', data)
+                .then(response => {
+                    messageDiv.innerHTML = '';
+                    const successSpan = document.createElement('span');
+                    successSpan.textContent = 'Updated database successfully';
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Response data: ${JSON.stringify(response.data)}`;
+                    messageDiv.appendChild(successSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message success';
+                    form.reset();
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 10000);
+
+                }).catch(error => {
+                    messageDiv.innerHTML = '';
+                    const errorSpan = document.createElement('span');
+                    errorSpan.textContent = 'Failed to update database';
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Error: ${JSON.stringify(error)}`;
+                    messageDiv.appendChild(errorSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 15000);
+                });
+        }
+
+        // Function to check database contents
+        function checkDatabase() {
+            window.location.href = 'my-database.html';
+        }
+    </script>
+</body>
+
+</html>

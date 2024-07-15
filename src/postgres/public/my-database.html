@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .menu-link {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .menu-link:hover {
+      background-color: #0056b3;
+    }
+
+    .add-button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      margin-left: 20px;
+      text-decoration: none;
+      color: #fff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .add-button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h2>Product List</h2>
+    <table id="productTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+        <!-- Table rows will be inserted here dynamically -->
+      </tbody>
+    </table>
+
+    <a href="/menu" class="menu-link">Back to Menu</a>
+    <button class="add-button" onclick="redirectToAddProduct()">Add Product</button>
+  </div>
+
+  <script>
+    async function fetchProducts() {
+      try {
+        const response = await fetch('http://localhost:9000/database');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const products = await response.json();
+        renderProducts(products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    function renderProducts(products) {
+      const tableBody = document.getElementById('productTableBody');
+      tableBody.innerHTML = ''; // Clear previous table rows
+
+      products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.name}</td>
+          <td>${product.quantity}</td>
+          <td>${product.description}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Fetch products when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchProducts();
+    });
+
+    function redirectToAddProduct() {
+      // Replace with your actual add product page URL
+      window.location.href = 'add-products.html';
+    }
+  </script>
+</body>
+</html>

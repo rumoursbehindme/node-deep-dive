@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Menu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu {
+            margin-bottom: 20px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu a:hover {
+            background-color: #0056b3;
+        }
+
+        .menu button {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            background-image: linear-gradient(to right, #f12711, #f5af19);
+        }
+
+        .menu button:hover {
+            background-image: linear-gradient(to right, #f5af19, #f12711);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            overflow: auto;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Database Menu</h2>
+        <div class="menu">
+            <a href="my-database.html" class="link">View Database</a>
+            <a href="add-products.html" class="link">Add Products</a>
+            <button id="deleteRecentlyAddedRow" onclick="confirmDelete()">
+                Delete Recently Added Product Row
+            </button>
+        </div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function confirmDelete() {
+            if (confirm("Are you sure you want to delete the last added product row?")) {
+                deleteRecentlyAddedRow();
+            }
+        }
+
+        function deleteRecentlyAddedRow() {
+            let messageDiv = document.getElementById('message');
+            axios.post('http://localhost:9000/deleteRecentlyAddedRow')
+                .then(response => {
+                    console.log(response);
+                    messageDiv.innerHTML = '';
+                    const successSpan = document.createElement('span');
+                    successSpan.textContent = 'Deleted the last row successfully';
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Deleted product: ${JSON.stringify(response.data)}`;
+                    messageDiv.appendChild(successSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message success';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+
+                }).catch(error => {
+                    messageDiv.innerHTML = '';
+                    const errorSpan = document.createElement('span');
+                    errorSpan.textContent = 'Failed to DELETE Last Row.';
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Error: ${JSON.stringify(error)}`;
+                    messageDiv.appendChild(errorSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 25000);
+                });
+        }
+    </script>
+</body>
+
+</html>

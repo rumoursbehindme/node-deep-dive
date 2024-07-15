@@ -7,6 +7,7 @@
   "private": false,
   "type": "module",
   "scripts": {
+    "postgres": "node src/postgres/index.js",
     "fork": "node src/fork-feature/mainfile.js",
     "spawn": "node src/spawn-feature/spawnit.js"
   },

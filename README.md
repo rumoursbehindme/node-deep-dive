@@ -2,18 +2,6 @@
 
 Welcome to the **node-deep-dive** repository! This project is dedicated to my journey of learning and enhancing my skills in Node.js and full stack development.
 
-## 📑 Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technologies](#technologies)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
 ## ε(´｡•᎑•`)っ 💕 Introduction
 
 This repository serves as a collection of various projects, examples, and experiments that I've undertaken to deepen my understanding of Node.js and related technologies. It includes everything from basic concepts to advanced techniques in Node.js, web development, and database interactions.

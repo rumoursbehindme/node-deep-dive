@@ -1,5 +1,4 @@
 import staticPlugin from '@fastify/static';
-import { readFile } from 'fs'
 import { join } from 'path';
 import pf from 'fastify-plugin';
 

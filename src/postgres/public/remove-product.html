@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            /* Ensures padding and border are included in width calculation */
+            margin-bottom: 10px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            /* Remove underline if treated as a link */
+            outline: none;
+            /* Remove default focus outline */
+        }
+
+        button:hover {
+            filter: brightness(90%);
+            /* Reduce brightness on hover */
+        }
+
+        .back-to-menu-button {
+            background-color: #007bff;
+            margin-bottom: 10px;
+            /* Added margin bottom for spacing */
+            color: #fff;
+        }
+
+        .back-to-menu-button:hover {
+            background-color: #0056b3
+        }
+
+        .check-database-button {
+            background-color: #28a745;
+            margin-bottom: 10px;
+            /* Added margin bottom for spacing */
+            color: #fff;
+        }
+
+        .check-database-button:hover {
+            background-color: #218838;
+        }
+
+        .remove-product-button {
+            background-color: #dc3545;
+            /* Light red */
+            color: #fff;
+        }
+
+        .remove-product-button:hover {
+            background-color: #c82333;
+            /* Darker shade of red on hover */
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: none;
+            overflow: auto;
+        }
+
+        .message.success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Remove Product</h2>
+        <form id="removeProductForm">
+            <label for="productName">Select Product Name:</label>
+            <select id="productName" name="productName">
+                <option value="" selected disabled>Select a product...</option> <!-- Initial prompt -->
+                <!-- Options will be populated dynamically -->
+            </select>
+
+            <label for="quantity">Select Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1">
+
+            <button type="button" onclick="removeOrUpdateProduct()" class="remove-product-button">Remove
+                Product</button>
+        </form>
+
+        <button class="check-database-button" onclick="checkDatabase()">Check Database</button>
+        <button class="back-to-menu-button" onclick="redirectToMenu()">Back to Menu</button>
+        <div id="message" class="message"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        async function fetchProducts() {
+            try {
+                const response = await fetch('http://localhost:9000/database');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const products = await response.json();
+                populateProductOptions(products);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        function populateProductOptions(products) {
+            const productNameSelect = document.getElementById('productName');
+            productNameSelect.innerHTML = ''; // Clear previous options
+
+            // Add initial prompt option
+            const initialOption = document.createElement('option');
+            initialOption.value = '';
+            initialOption.textContent = 'Select a product...';
+            productNameSelect.appendChild(initialOption);
+
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.name;
+                option.textContent = product.name;
+                productNameSelect.appendChild(option);
+            });
+
+            // Event listener for product selection change
+            productNameSelect.addEventListener('change', function () {
+                const selectedProduct = products.find(product => product.name === this.value);
+                if (selectedProduct) {
+                    // Update maximum quantity and placeholder based on available quantity
+                    const quantityInput = document.getElementById('quantity');
+                    quantityInput.min = 1; // Reset minimum value
+                    quantityInput.max = selectedProduct.quantity;
+                    quantityInput.placeholder = `Total quantities of product: ${selectedProduct.quantity}`;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+        });
+
+
+        function removeOrUpdateProduct() {
+            const productName = document.getElementById('productName').value;
+            const quantity = parseInt(document.getElementById('quantity').value, 10);
+            const messageDiv = document.getElementById('message');
+
+            if (!productName || isNaN(quantity) || quantity < 1) {
+                messageDiv.innerHTML = 'Please select a product and enter a valid quantity.';
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            const maxQuantity = parseInt(document.getElementById('quantity').max, 10);
+            const removeProduct = quantity === maxQuantity;
+            
+            if (quantity > maxQuantity) {
+                messageDiv.innerHTML = `Quantity exceeds available stock. Maximum quantity is ${maxQuantity}.`;
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            axios.post('http://localhost:9000/remove-or-update', { name: productName, quantity: removeProduct ? quantity : maxQuantity - quantity, removeProduct })
+                .then(response => {
+                    if (!response.data) {
+                        throw new Error('No response received from server');
+                    }
+                    messageDiv.innerHTML = '';
+                    const successSpan = document.createElement('span');
+                    successSpan.textContent = `Successfully removed ${quantity} units of ${productName}.`
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Affected row: ${JSON.stringify(response.data)}`
+                    messageDiv.appendChild(successSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message success';
+                    document.getElementById('removeProductForm').reset();
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 15000);
+                })
+                .catch(error => {
+                    messageDiv.innerHTML = '';
+                    const errorSpan = document.createElement('span');
+                    errorSpan.textContent = 'Failed to update database';
+                    const responseDiv = document.createElement('div');
+                    responseDiv.textContent = `Error: ${JSON.stringify(error)}`;
+                    messageDiv.appendChild(errorSpan);
+                    messageDiv.appendChild(responseDiv);
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 15000);
+                });
+        }
+
+
+        function redirectToMenu() {
+            window.location.href = '/menu.html';
+        }
+
+        function checkDatabase() {
+            window.location.href = '/my-database.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -57,6 +57,31 @@ const crudRoutes = async (instance) => {
             reply.status(500).send({ error: 'Failed to delete product' });
         }
     });
+
+    instance.post('/remove-or-update', async (req, reply) => {
+        const { name, quantity,removeProduct=false } = req.body;
+
+        try {
+            const checkQuery = 'SELECT * FROM products WHERE name = $1';
+            const checkResult = await client.query(checkQuery, [name]);
+
+            if (checkResult.rows.length === 0) {
+                reply.status(404).send({ error: 'Product not found' });
+                return;
+            }
+            if(removeProduct){
+                const removeQuery =  'Delete FROM products where name = $1';
+                const removeResult = await client.query(removeQuery, [name]);
+                reply.send(checkResult.rows[0]);
+            }
+            const updateQuery = 'UPDATE products SET quantity = $1 WHERE name = $2 RETURNING *';
+            const updateResult = await client.query(updateQuery, [quantity, name]);
+            reply.send(updateResult.rows[0]);
+        } catch (error) {
+            console.error('Error updating product:', error);
+            reply.status(500).send({ error: 'Failed to update product' });
+        }
+    });
 }
 
 export default pf(crudRoutes);

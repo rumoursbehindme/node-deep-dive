@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,8 @@
       overflow: hidden;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 12px;
       text-align: left;
@@ -69,8 +71,29 @@
     .add-button:hover {
       background-color: #218838;
     }
+
+    .remove-button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      margin-left: 20px;
+      text-decoration: none;
+      color: #fff;
+      background-color: #dc3545;
+      /* Light red */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .remove-button:hover {
+      background-color: #c82333;
+      /* Darker red on hover */
+    }
   </style>
 </head>
+
 <body>
   <div style="max-width: 800px; margin: 0 auto;">
     <h2>Product List</h2>
@@ -89,6 +112,7 @@
 
     <a href="/menu" class="menu-link">Back to Menu</a>
     <button class="add-button" onclick="redirectToAddProduct()">Add Product</button>
+    <button class="remove-button" onclick="removeProduct()">Remove Product</button>
   </div>
 
   <script>
@@ -129,6 +153,11 @@
       // Replace with your actual add product page URL
       window.location.href = 'add-products.html';
     }
+
+    function removeProduct() {
+      window.location.href = 'remove-product.html';
+    }
   </script>
 </body>
+
 </html>

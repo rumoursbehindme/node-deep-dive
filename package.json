@@ -14,10 +14,8 @@
   "repository": "https://github.com/rumoursbehindme/node-deep-dive.git",
   "author": "rajeevhegde5@gmail.com",
   "dependencies": {
-    "@fastify/formbody": "6.0.0",
     "@fastify/static": "^7.0.4",
     "fastify": "^4.28.1",
-    "fastify-formbody": "^5.3.0",
     "fastify-plugin": "^4.5.1",
     "pg": "^8.12.0"
   },

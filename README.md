@@ -1,6 +1,6 @@
 # 🤿 node-deep-dive
 
-Welcome to the **node-deep-dive** repository! This project is dedicated to my journey of learning and enhancing my skills in Node.js and full stack development.
+Welcome to the **node-deep-dive** repository! This project is dedicated to my journey of learning and enhancing my skills in Node.js and full-stack development.
 
 ## ε(´｡•᎑•`)っ 💕 Introduction
 
@@ -23,7 +23,7 @@ This repository serves as a collection of various projects, examples, and experi
 To get started with this repository, clone it to your local machine using the following command:
 
 ```bash
-git clone https://github.com/yourusername/node-deep-dive.git
+git clone https://github.com/rumoursbehindme/node-deep-dive.git
 ```
 
 ## 📂 Navigate to the project directory:
@@ -32,7 +32,7 @@ cd node-deep-dive
 ```
 ## 📦 Install the necessary dependencies:
 ```
-npm install
+yarn install
 ```
 
 # ⚡ Usage
